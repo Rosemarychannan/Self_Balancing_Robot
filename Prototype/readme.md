@@ -1,10 +1,7 @@
 # Arduino - Motor Driver pin connection
 21(D3)-BIN1
-
 23(D5)-BIN2
-
 24(D6)-AIN2
-
 27(D9)-AIN1
 
 # Arduino pin numbers
