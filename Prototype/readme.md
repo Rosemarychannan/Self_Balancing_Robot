@@ -7,11 +7,15 @@ show an assembled robot before proceeding to the next step.
 • Drive motors at 25%, 50%, 75%, 100% of maximum rpm in one direction (both
 motors at the same time) and show the PWM signals at the motor drivers
 outputs on the oscilloscope.
+
 • Drive motors at 25% and 75% of maximum rpm in the opposite direction (both
 motors at the same time) - no need to show PWM.
+
 • Drive motors at 25% and 75% of maximum rpm in opposite directions of each
 other - no need to show PWM.
+
 • Reverse directions and repeat the step above.
+
 • Drive the motors such that the rpm is proportional to the angle of tilt from the
 vertical position. Show a 0 rpm motor speed at the vertical position. Incline the
 bot in both directions with respect to the vertical, and show how the motor
