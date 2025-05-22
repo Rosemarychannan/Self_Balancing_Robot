@@ -1,9 +1,21 @@
-# 1. Your robot should be fully assembled for this demo. 
+# Arduino pin numbers
+
+![91AA0AAF-C107-4B15-A3DB-4EC987E6364A](https://github.com/user-attachments/assets/4c3dd768-6818-4001-9ffa-96b71e15a0c0)
+
+# DRV8833 Motor Drivers
+<img width="557" alt="BAEDA30D-4A78-443C-A50A-81494314411D" src="https://github.com/user-attachments/assets/d70ab712-14a1-4c5e-8798-28c1caad8d32" />
+
+# Marking Rubric
+1. Your robot should be fully assembled for this demo.
+
+
 The Arduino board together with
 the motor driver(s) should be mounted on a breadboard on the 2nd floor. Only the
 bench power supply must be used for this demo (not the battery pack). You must
 show an assembled robot before proceeding to the next step.
-# 2. Without the wheels touching any surface, demonstrate the following:
+
+2. Without the wheels touching any surface, demonstrate the following:
+
 • Drive motors at 25%, 50%, 75%, 100% of maximum rpm in one direction (both
 motors at the same time) and show the PWM signals at the motor drivers
 outputs on the oscilloscope.
