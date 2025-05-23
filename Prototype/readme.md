@@ -9,11 +9,14 @@ $${\color{blue}27(D9)-AIN1}$$
 
 # DRV8833 Motor Drivers
 <img width="557" alt="BAEDA30D-4A78-443C-A50A-81494314411D" src="https://github.com/user-attachments/assets/d70ab712-14a1-4c5e-8798-28c1caad8d32" />
+
 # Testing
-both forward - probe on AIN1 and BIN1
-both backward - probe on AIN2 and BIN2
-opposite A - probe on AIN1 and BIN2
+
+both forward - probe on AIN1 and BIN1  
+both backward - probe on AIN2 and BIN2  
+opposite A - probe on AIN1 and BIN2  
 opposite B - probe on AIN2 and BIN1
+
 # Marking Rubric
 1. Your robot should be fully assembled for this demo.
 
