@@ -1,10 +1,11 @@
 #include <math.h>
+#include <Arduino_BMI270_BMM150.h>
 
 //defining arduino pins for readability
-#define BIN1 21
-#define BIN2 23
-#define AIN2 24
-#define AIN1 27
+#define BIN1 D3
+#define BIN2 D5
+#define AIN2 D6
+#define AIN1 D9
 #define A 1
 #define B 2
 
@@ -81,40 +82,42 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("Demo starting);
+  Serial.println("Demo starting");
   delay(5000);
-  
+
+
   // Drive motors at 25%, 50%, 75%, 100% of maximum rpm in one direction
   // 20 second delay to measure and show PWM signal
-  for(int i = 25; i <= 100, i+=25){
+  for(int i = 25; i <= 100; i+=25){
     Serial.println("Both driving forward(%): ");
-    Serial.print(i)
+    Serial.print(i);
     both_forward(i);
-    delay(20000)
+    delay(20000);
   }
 
   // Drive motors at 25% and 75% of maximum rpm in the other direction
   // 20 second delay to measure and show PWM signal
-  for(int i = 25; i <= 75, i+=50){
+  for(int i = 25; i <= 75; i+=50){
     Serial.println("Both driving in reverse(%): ");
-    Serial.print(i)
+    Serial.print(i);
     both_reverse(i);
-    delay(20000)
+    delay(20000);
   }
 
   // Drive motors at 25% and 75% of maximum rpm in opposite directions of each other - A
-  for(int i = 25; i <= 75, i+=50){
+  for(int i = 25; i <= 75; i+=50){
     Serial.println("Driving in opposing direction(%) - A: ");
-    Serial.print(i)
+    Serial.print(i);
     opposite_A(i);
-    delay(20000)
+    delay(20000);
   }
 
   // Drive motors at 25% and 75% of maximum rpm in opposite directions of each other - B
-  for(int i = 25; i <= 75, i+=50){
+  for(int i = 25; i <= 75; i+=50){
     Serial.println("Driving in opposing direction(%) - B: ");
-    Serial.print(i)
+    Serial.print(i);
     opposite_B(i);
-    delay(20000)
+    delay(20000);
   }
+
 }
