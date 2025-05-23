@@ -1,6 +1,6 @@
 # Arduino - Motor Driver pin connection
 $${\color{grey}21(D3)-BIN1}$$  
-$${\color{palegoldenrod}23(D5)-BIN2}$$  
+$${\color{darkkhaki}23(D5)-BIN2}$$  
 $${\color{green}24(D6)-AIN2}$$  
 $${\color{blue}27(D9)-AIN1}$$  
 
