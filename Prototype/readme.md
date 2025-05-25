@@ -5,6 +5,11 @@ both backward - probe on AIN2 and BIN2
 opposite A - probe on AIN1 and BIN2  
 opposite B - probe on AIN2 and BIN1
 
+
+https://github.com/user-attachments/assets/334fa918-c5fd-4dce-91c0-ac61ba87fc28
+
+
+
 # Arduino - Motor Driver pin connection
 $${\color{grey}21(D3)-BIN1}$$  
 $${\color{darkkhaki}23(D5)-BIN2}$$  
