@@ -5,10 +5,10 @@ $${\color{green}24(D6)-AIN2}$$
 $${\color{blue}27(D9)-AIN1}$$  
 
 # Arduino pin numbers
-![91AA0AAF-C107-4B15-A3DB-4EC987E6364A](https://github.com/user-attachments/assets/4c3dd768-6818-4001-9ffa-96b71e15a0c0)
+<img width="300" alt="Arduino-pin-num" src="https://github.com/user-attachments/assets/4c3dd768-6818-4001-9ffa-96b71e15a0c0" />
 
 # DRV8833 Motor Drivers
-<img width="557" alt="BAEDA30D-4A78-443C-A50A-81494314411D" src="https://github.com/user-attachments/assets/d70ab712-14a1-4c5e-8798-28c1caad8d32" />
+<img width="300" alt="BAEDA30D-4A78-443C-A50A-81494314411D" src="https://github.com/user-attachments/assets/d70ab712-14a1-4c5e-8798-28c1caad8d32" />
 
 # Testing
 
