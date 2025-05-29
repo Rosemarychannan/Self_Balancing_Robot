@@ -5,11 +5,6 @@ both backward - probe on AIN2 and BIN2
 opposite A - probe on AIN1 and BIN2  
 opposite B - probe on AIN2 and BIN1
 
-
-https://github.com/user-attachments/assets/334fa918-c5fd-4dce-91c0-ac61ba87fc28
-
-
-
 # Arduino - Motor Driver pin connection
 $${\color{grey}21(D3)-BIN1}$$  
 $${\color{darkkhaki}23(D5)-BIN2}$$  
@@ -50,3 +45,5 @@ vertical position. Show a 0 rpm motor speed at the vertical position. Incline th
 bot in both directions with respect to the vertical, and show how the motor
 speed increases proportionally with the angle. Both motors should rotate in the
 same direction - no need to show PWM.
+
+https://github.com/user-attachments/assets/334fa918-c5fd-4dce-91c0-ac61ba87fc28
