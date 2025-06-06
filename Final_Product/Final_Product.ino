@@ -29,23 +29,23 @@ void forward(int num, int pwm_percent){
   int duty_cycle = 255.0f * pwm_percent / 100.0f;
   int 
   if(num == A){
-    analogWrite(AIN1,duty_cycle);
-    analogWrite(AIN2,255);
-  }
-  else if(num == B){
-    analogWrite(BIN1,duty_cycle);
-    analogWrite(BIN2,255);
-  }
-}
-void reverse(int num, int pwm_percent){
-  int duty_cycle = 255.0f * pwm_percent / 100.0f;
-  if(num == A){
     analogWrite(AIN1,255);
     analogWrite(AIN2,duty_cycle);
   }
   else if(num == B){
     analogWrite(BIN1,255);
     analogWrite(BIN2,duty_cycle);
+  }
+}
+void reverse(int num, int pwm_percent){
+  int duty_cycle = 255.0f * pwm_percent / 100.0f;
+  if(num == A){
+    analogWrite(AIN1,duty_cycle);
+    analogWrite(AIN2,255);
+  }
+  else if(num == B){
+    analogWrite(BIN1,duty_cycle);
+    analogWrite(BIN2,255);
   }
 }
 void both_motorOff(){
