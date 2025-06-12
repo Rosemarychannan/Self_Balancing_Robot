@@ -1,3 +1,12 @@
+#include <ArduinoBLE.h>
+
+#define BUFFER_SIZE 20
+
+// Define a custom BLE service and characteristic
+BLEService customService("00000000-5EC4-4083-81CD-A10B8D5CF6EC");
+BLECharacteristic customCharacteristic(
+    "00000001-5EC4-4083-81CD-A10B8D5CF6EC", BLERead | BLEWrite | BLENotify, BUFFER_SIZE, false);
+
 #include <math.h>
 #include <Arduino_BMI270_BMM150.h>
 
