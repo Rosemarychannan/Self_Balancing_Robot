@@ -94,7 +94,32 @@ void setup() {
   pinMode(BIN2, OUTPUT);
   pinMode(AIN1, OUTPUT);
   pinMode(AIN2, OUTPUT);
+  
+    // Initialize the built-in LED to indicate connection status
+  pinMode(LED_BUILTIN, OUTPUT);
 
+  if (!BLE.begin()) {
+    Serial.println("Starting BLE failed!");
+    while (1);
+  }
+
+  // Set the device name and local name
+  BLE.setLocalName("BLE-DEVICE");
+  BLE.setDeviceName("BLE-DEVICE");
+
+  // Add the characteristic to the service
+  customService.addCharacteristic(customCharacteristic);
+
+  // Add the service
+  BLE.addService(customService);
+
+  // Set an initial value for the characteristic
+  customCharacteristic.writeValue("Waiting for data");
+
+  // Start advertising the service
+  BLE.advertise();
+
+  Serial.println("Bluetooth® device active, waiting for connections...");
   Serial.println("Setup Finished");
   start_time = micros();
 }
