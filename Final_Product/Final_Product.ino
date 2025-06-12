@@ -3,9 +3,9 @@
 #define BUFFER_SIZE 20
 
 // Define a custom BLE service and characteristic
-BLEService customService("00000000-5EC4-4083-81CD-A10B8D5CF6EC");
+BLEService customService("00000000-5EC4-4083-81CD-A10B8D5CF6ED");
 BLECharacteristic customCharacteristic(
-    "00000001-5EC4-4083-81CD-A10B8D5CF6EC", BLERead | BLEWrite | BLENotify, BUFFER_SIZE, false);
+    "00000001-5EC4-4083-81CD-A10B8D5CF6ED", BLERead | BLEWrite | BLENotify, BUFFER_SIZE, false);
 
 #include <math.h>
 #include <Arduino_BMI270_BMM150.h>
@@ -21,10 +21,10 @@ BLECharacteristic customCharacteristic(
 // Constants and state variables
 float k = 0.9;
 float kp = 7.5;
-float ki = 150;
-float kd = 0.4;
+float ki = 75;
+float kd = 0.3;
 
-float desired_angle = 0; // balance setpoint
+float desired_angle = 1.7; // balance setpoint
 float old_theta = 0;
 float gyro_theta = 0;
 float old_error = 0;
@@ -104,8 +104,8 @@ void setup() {
   }
 
   // Set the device name and local name
-  BLE.setLocalName("BLE-DEVICE");
-  BLE.setDeviceName("BLE-DEVICE");
+  BLE.setLocalName("Lance");
+  BLE.setDeviceName("Lance");
 
   // Add the characteristic to the service
   customService.addCharacteristic(customCharacteristic);
@@ -141,10 +141,13 @@ void keyboard_test (void) {
         task = 3;
     }
     else if (input == "reset") {
-
+        i_theta = 0;
     }
     else if (input == "c") {
       task = 4;
+    }
+     else if (input == "angle") {
+      task = 5;
     }
 
 
@@ -157,6 +160,9 @@ void keyboard_test (void) {
         break;
         case 3:
             if(input == "0" || input.toFloat() > 0) kd = input.toFloat();
+        break;
+        case 5:
+            if(input == "0" || input.toFloat() > 0) desired_angle = input.toFloat();
         break;
     }
 }
