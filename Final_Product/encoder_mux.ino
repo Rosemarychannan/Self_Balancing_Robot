@@ -9,6 +9,7 @@
 #include "AS5600.h"
 #define EN_ADDR 0x36
 #define ANGLE_REG 0x0E
+#define MUX_RST (reset_pin)
 TCA9548 MP(0x70);
 AS5600L as5600;   //  use default Wire
 
@@ -25,11 +26,12 @@ void setup()
   {
     Serial.println("COULD NOT CONNECT");
   }
-
+  MP.setResetPin(MUX_RST);
   MP.enableChannel(0);
   Serial.print(MP.isEnabled(0));
   MP.enableChannel(1);
   Serial.print(MP.isEnabled(1));
+  
 //Encoder setup
   as5600.begin(4);  //  set direction pin.
   as5600.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
