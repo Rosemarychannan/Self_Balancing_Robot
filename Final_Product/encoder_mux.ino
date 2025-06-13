@@ -13,10 +13,30 @@
 TCA9548 MP(0x70);
 AS5600L as5600;   //  use default Wire
 
+// Define motor pins
+#define BIN1 D3
+#define BIN2 D5
+#define AIN2 D6
+#define AIN1 D9
+#define A 1
+#define B 2
+
 uint8_t channels = 0;
 int angle = 0;
 
-
+void forward(int num, int pwm){
+  if(num == A){
+    analogWrite(AIN1,255);
+    analogWrite(AIN2,constrain(255-pwm, 0, 255));
+  } else if(num == B){
+    analogWrite(BIN1,255);
+    analogWrite(BIN2,constrain(255-pwm, 0, 255));
+  }
+}
+void both_forward(int pwm){
+  forward(A, pwm);
+  forward(B, pwm);
+}
 void setup()
 {
   Serial.begin(115200);
@@ -45,6 +65,7 @@ void setup()
 
 void loop()
 {
+  both_forward(255);
   int angle_0,angle_1;
   MP.selectChannel(0);
   angle_0 = as5600.read_angle();
