@@ -27,6 +27,7 @@ void setup()
     Serial.println("COULD NOT CONNECT");
   }
   MP.setResetPin(MUX_RST);
+  MP.reset();
   MP.enableChannel(0);
   Serial.print(MP.isEnabled(0));
   MP.enableChannel(1);
