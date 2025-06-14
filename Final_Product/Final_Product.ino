@@ -9,6 +9,7 @@ BLECharacteristic customCharacteristic(
 
 #include <math.h>
 #include <Arduino_BMI270_BMM150.h>
+#include <string.h>
 
 // Define motor pins
 #define BIN1 D3
@@ -20,11 +21,12 @@ BLECharacteristic customCharacteristic(
 
 // Constants and state variables
 float k = 0.9;
-float kp = 7.5;
-float ki = 75;
-float kd = 0.3;
+float kp = 7;
+float ki = 120;
+float kd = 0.4;
 
-float desired_angle = 1.7; // balance setpoint
+float offset_angle = 1.75; // balance setpoint
+float desired_angle = 0; // balance setpoint
 float old_theta = 0;
 float gyro_theta = 0;
 float old_error = 0;
@@ -55,6 +57,16 @@ void forward(int num, int pwm){
   }
 }
 
+void turnLeft(int pwm) {
+  forward(A, 0.66*pwm); // Left wheel goes backward
+  forward(B, pwm); // Right wheel goes forward
+}
+
+void turnRight(int pwm) {
+  forward(A, pwm); // Left wheel goes forward
+  forward(B, 0.66*pwm); // Right wheel goes backward
+}
+
 void reverse(int num, int pwm){
   if(num == A){
     analogWrite(AIN1,constrain(255-pwm, 0, 255));
@@ -81,9 +93,9 @@ void both_reverse(int pwm){
 }
 
 void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(10);
-  while (!Serial);
+  //Serial.begin(9600);
+  //Serial.setTimeout(10);
+  //while (!Serial);
 
   if (!IMU.begin()) {
     Serial.println("Failed to initialize IMU!");
@@ -162,7 +174,7 @@ void keyboard_test (void) {
             if(input == "0" || input.toFloat() > 0) kd = input.toFloat();
         break;
         case 5:
-            if(input == "0" || input.toFloat() > 0) desired_angle = input.toFloat();
+            if(input == "0" || input.toFloat() > 0) offset_angle = input.toFloat();
         break;
     }
 }
@@ -173,18 +185,74 @@ void loop() {
   float acc_theta, theta;
   float error, d_theta, pid_out;
   int pwm;
-  keyboard_test();
   //Bluetooth setup
   // Wait for a BLE central to connect
   BLEDevice central = BLE.central();
 
   if (central) {
-    Serial.print("Connected to central: ");
+    //Serial.print("Connected to central: ");
     Serial.println(central.address());
     digitalWrite(LED_BUILTIN, HIGH); // Turn on LED to indicate connection
 
     // Keep running while connected
     while (central.connected()) {
+      keyboard_test();
+      //Serial.println("Connected from central.");
+      //Finish bluetooth setup
+        if (IMU.accelerationAvailable() && IMU.gyroscopeAvailable()) {
+          // Read accelerometer
+          IMU.readAcceleration(acc_x, acc_y, acc_z);
+          acc_theta = atan2(acc_y, acc_z) * 180.0 / M_PI;
+
+          // Read gyroscope
+          IMU.readGyroscope(gyro_x, gyro_y, gyro_z);
+          gyro_x = -gyro_x;
+
+          // Calculate delta time
+          unsigned long now = micros();
+          float dt = (now - start_time) / 1000000.0;
+          start_time = now;
+
+          // Integrate gyro
+          gyro_theta += gyro_x * dt;
+
+          // Complementary filter
+          theta = (1 - k) * acc_theta + k * (old_theta + gyro_x * dt);
+
+          // PID calculations
+          error = (offset_angle + desired_angle) - theta;
+          d_theta = (old_theta - theta) / dt;
+          i_theta += ki *(error + old_error) / 2.0 * dt;
+          i_theta = constrain(i_theta,-50,50);
+
+          pid_out = (kp * error) + (i_theta) + (kd * d_theta);
+          if(pid_out < -255 or pid_out > 255) {
+            pwm = 255;
+          }
+          else pwm = int(abs(pid_out));
+
+          //Serial.print("offset_angle: "); Serial.print(offset_angle);
+          //Serial.print("\t");
+          //Serial.print("Kp: "); Serial.print(kp);
+          //Serial.print("\t");
+          //Serial.print("Ki: "); Serial.print(ki);
+          //Serial.print("\t");
+          //Serial.print("Kd: "); Serial.print(kd);
+          //Serial.println("\t");
+          //Serial.print(" i_theta: "); Serial.print(i_theta);
+          //Serial.print("\t");
+          //Serial.print(" kd*d_theta: "); Serial.println(kd*d_theta);
+
+          // Apply motor control
+          if (pid_out < 0)
+            both_forward(pwm);
+          else if (pid_out > 0)
+            both_reverse(pwm);
+          else
+            both_motorOff();
+
+          old_error = error;
+          old_theta = theta;
       // Check if the characteristic was written
       if (customCharacteristic.written()) {
        // Get the length of the received data
@@ -202,69 +270,34 @@ void loop() {
         Serial.print("Received data: ");
         Serial.println(receivedString);
 
-
+        if (strcmp((const char*)receivedString, "r") == 0) {
+          turnRight(pwm);
+        }   
+        else if (strcmp((const char*)receivedString, "l") == 0) {
+          turnLeft(pwm);
+        }
+        else if (strcmp((const char*)receivedString, "f") == 0) {
+          desired_angle = -0.5;
+          delay(100);
+          desired_angle = 0;
+          delay(200);
+        }
+        else if (strcmp((const char*)receivedString, "b") == 0) {
+          desired_angle = 0.5;
+          delay(100);
+          desired_angle = 0;
+          delay(200);
+        }
+        else if (strcmp((const char*)receivedString, "s") == 0) {
+          desired_angle = 0;
+        }
         // Optionally, respond by updating the characteristic's value
-        customCharacteristic.writeValue("Data received");
+        //customCharacteristic.writeValue("Data received");
+        Serial.println(desired_angle);
       }
     }
-
+  }
     digitalWrite(LED_BUILTIN, LOW); // Turn off LED when disconnected
     Serial.println("Disconnected from central.");
-  }
-//Finish bluetooth setup
-  if (IMU.accelerationAvailable() && IMU.gyroscopeAvailable()) {
-    // Read accelerometer
-    IMU.readAcceleration(acc_x, acc_y, acc_z);
-    acc_theta = atan2(acc_y, acc_z) * 180.0 / M_PI;
-
-    // Read gyroscope
-    IMU.readGyroscope(gyro_x, gyro_y, gyro_z);
-    gyro_x = -gyro_x;
-
-    // Calculate delta time
-    unsigned long now = micros();
-    float dt = (now - start_time) / 1000000.0;
-    start_time = now;
-
-    // Integrate gyro
-    gyro_theta += gyro_x * dt;
-
-    // Complementary filter
-    theta = (1 - k) * acc_theta + k * (old_theta + gyro_x * dt);
-
-    // PID calculations
-    error = desired_angle - theta;
-    d_theta = (old_theta - theta) / dt;
-    i_theta += ki *(error + old_error) / 2.0 * dt;
-    i_theta = constrain(i_theta,-255,255);
-
-    pid_out = (kp * error) + (i_theta) + (kd * d_theta);
-    if(pid_out < -255 or pid_out > 255) {
-      pwm = 255;
-    }
-    else pwm = int(abs(pid_out));
-
-    Serial.print("Angle: "); Serial.print(theta);
-    Serial.print("\t");
-    Serial.print(" PID: "); Serial.print(pid_out);
-    Serial.print("\t");
-    Serial.print(" PWM: "); Serial.print(pwm);
-    Serial.print("\t");
-    Serial.print(" kp*error: "); Serial.print(kp*error);
-    Serial.print("\t");
-    Serial.print(" i_theta: "); Serial.print(i_theta);
-    Serial.print("\t");
-    Serial.print(" kd*d_theta: "); Serial.println(kd*d_theta);
-
-    // Apply motor control
-    if (pid_out < 0)
-      both_forward(pwm);
-    else if (pid_out > 0)
-      both_reverse(pwm);
-    else
-      both_motorOff();
-
-    old_error = error;
-    old_theta = theta;
   }
 }
