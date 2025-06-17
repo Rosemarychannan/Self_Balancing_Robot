@@ -5,71 +5,73 @@
 //     URL: https://github.com/RobTillaart/TCA9548
 
 
-#include "TCA9548.h"
-#include "AS5600.h"
+#include <Wire.h>
 #define EN_ADDR 0x36
 #define ANGLE_REG 0x0E
-#define MUX_RST (reset_pin)
-TCA9548 MP(0x70);
-AS5600L as5600;   //  use default Wire
+#define MP 0x70
+#define CH0 0x01
+#define CH1 0x02
 
-// Define motor pins
-#define BIN1 D3
-#define BIN2 D5
-#define AIN2 D6
-#define AIN1 D9
-#define A 1
-#define B 2
 
-uint8_t channels = 0;
-int angle = 0;
-
-void forward(int num, int pwm){
-  if(num == A){
-    analogWrite(AIN1,255);
-    analogWrite(AIN2,constrain(255-pwm, 0, 255));
-  } else if(num == B){
-    analogWrite(BIN1,255);
-    analogWrite(BIN2,constrain(255-pwm, 0, 255));
-  }
-}
-void both_forward(int pwm){
-  forward(A, pwm);
-  forward(B, pwm);
-}
 void setup()
 {
-  Serial.begin(115200);
-
+  Serial.begin(9600);
   Wire.begin();
-  if (MP.begin() == false)
-  {
-    Serial.println("COULD NOT CONNECT");
-  }
-  MP.setResetPin(MUX_RST);
-  MP.reset();
-  MP.enableChannel(0);
-  Serial.print(MP.isEnabled(0));
-  MP.enableChannel(1);
-  Serial.print(MP.isEnabled(1));
   
-//Encoder setup
-  as5600.begin(4);  //  set direction pin.
-  as5600.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
-  int b = as5600.isConnected();
-  Serial.print("Connect: ");
-  Serial.println(b);
-  delay(1000);
-
 }
+int read_angle(int channel){
+  Wire.beginTransmission(MP); // transmit to device #4
+  Serial.print("transmission begin...or not: ");
+  Wire.write(channel);              // sends one byte
+  int a = Wire.endTransmission();    // stop transmitting
+  Serial.println("error code: hoping for 0. ");
+  Serial.println(a);
 
+  Wire.beginTransmission(EN_ADDR);
+  int b = Wire.write(ANGLE_REG);
+  Serial.print("bytes written: ");
+  Serial.print(b);
+  int c = Wire.endTransmission(false);    // stop transmitting
+  Serial.print(c);
+
+  int d = Wire.requestFrom(EN_ADDR, 2);
+  Serial.print(c);
+
+  if (Wire.available() == 2) {
+    uint8_t msb = Wire.read();
+    Serial.print(msb);
+    uint8_t lsb = Wire.read();
+    Serial.print(lsb);
+    return ((msb << 8) | lsb); // 12-bit result is in lower bits
+  } else {
+    return 0xFFFF;  // error code
+    Serial.print("ERROR");
+  }
+}
 void loop()
 {
-  both_forward(255);
   int angle_0,angle_1;
-  MP.selectChannel(0);
-  angle_0 = as5600.read_angle();
-  MP.selectChannel(1);
-  angle_1 = as5600.read_angle();
-  delay(1000);
+  angle_0 = read_angle(CH0);
+  Serial.print(angle_0);
+  Serial.print("\t");
+  angle_1 = read_angle(CH1);
+  Serial.println(angle_1);
 }
+/*
+  velocity_error = target_velocity - current_velocity;
+  d_velocity = (velocity_error - old_velocity_error) / dt;
+  i_velocity += ki_vel * (velocity_error + old_velocity_error) / 2.0 * dt;
+
+  // Optional: constrain integral to avoid windup
+  i_velocity = constrain(i_velocity, -10.0, 10.0); // degrees
+
+  tilt_setpoint = kp_vel * velocity_error + i_velocity + kd_vel * d_velocity;
+
+  // Optional: limit tilt output
+  tilt_setpoint = constrain(tilt_setpoint, -10.0, 10.0); // degrees
+
+  old_velocity_error = velocity_error;
+*/
+
+
+//  -- END OF FILE --
