@@ -1,3 +1,7 @@
+// A is left wheel and B is right wheel
+// AIN1 and BIN1 used for reverse
+// AIN2 and BIN2 used for forward
+
 #include <ArduinoBLE.h>
 
 #define BUFFER_SIZE 20
@@ -25,7 +29,7 @@ float kp = 7;
 float ki = 120;
 float kd = 0.4;
 
-float offset_angle = 1.75; // balance setpoint
+float offset_angle = 0.35; // balance setpoint
 float desired_angle = 0; // balance setpoint
 float old_theta = 0;
 float gyro_theta = 0;
@@ -57,14 +61,16 @@ void forward(int num, int pwm){
   }
 }
 
+// 1.5 * PWM_left = PWM_right
 void turnLeft(int pwm) {
-  forward(A, 0.66*pwm); // Left wheel goes backward
-  forward(B, pwm); // Right wheel goes forward
+  forward(A, 0.66*pwm);
+  forward(B, pwm); 
 }
 
+// PWM_left = 1.5 * PWM_right
 void turnRight(int pwm) {
-  forward(A, pwm); // Left wheel goes forward
-  forward(B, 0.66*pwm); // Right wheel goes backward
+  forward(A, pwm);
+  forward(B, 0.66*pwm);
 }
 
 void reverse(int num, int pwm){
@@ -83,12 +89,12 @@ void both_motorOff(){
 }
 
 void both_forward(int pwm){
-  forward(A, pwm);
+  forward(A, pwm+1);
   forward(B, pwm);
 }
 
 void both_reverse(int pwm){
-  reverse(A, pwm);
+  reverse(A, pwm+1);
   reverse(B, pwm);
 }
 
@@ -271,26 +277,29 @@ void loop() {
         Serial.println(receivedString);
 
         if (strcmp((const char*)receivedString, "r") == 0) {
-          turnRight(pwm);
+          turnRight(0.66*pwm);
+          delay(50); // change based on how much it turns
         }   
         else if (strcmp((const char*)receivedString, "l") == 0) {
           turnLeft(pwm);
+          delay(200); // change based on how much it turns
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
           desired_angle = -0.5;
-          delay(100);
-          desired_angle = 0;
-          delay(200);
         }
         else if (strcmp((const char*)receivedString, "b") == 0) {
           desired_angle = 0.5;
-          delay(100);
-          desired_angle = 0;
-          delay(200);
         }
         else if (strcmp((const char*)receivedString, "s") == 0) {
           desired_angle = 0;
         }
+        else if (strcmp((const char*)receivedString, "p") == 0) {
+          desired_angle +=0.1;
+        }
+        else if (strcmp((const char*)receivedString, "n") == 0) {
+          desired_angle -=0.1;
+        }
+
         // Optionally, respond by updating the characteristic's value
         //customCharacteristic.writeValue("Data received");
         Serial.println(desired_angle);
