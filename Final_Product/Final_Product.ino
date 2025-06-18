@@ -3,8 +3,17 @@
 // AIN2 and BIN2 used for forward
 
 #include <ArduinoBLE.h>
+#include "Arduino_BMI270_BMM150.h"
+#include <AS5600.h>
+#include <ArduinoBLE.h>
+#include <Wire.h>
+#include "TCA9548A.h"
 
 #define BUFFER_SIZE 20
+
+TCA9548A I2CMux;
+AS5600 encoderLeft;
+AS5600 encoderRight;
 
 // Define a custom BLE service and characteristic
 BLEService customService("00000000-5EC4-4083-81CD-A10B8D5CF6ED");
@@ -23,11 +32,15 @@ BLECharacteristic customCharacteristic(
 #define A 1
 #define B 2
 
+float vel, angV0,angV1;
 // Constants and state variables
 float k = 0.9;
 float kp = 7;
 float ki = 120;
 float kd = 0.4;
+float k_pid = 1;
+float ki_en = 0;
+float kp_en = 0;
 
 float offset_angle = 0.35; // balance setpoint
 float desired_angle = 0; // balance setpoint
@@ -111,6 +124,26 @@ void setup() {
   if (!IMU.begin()) {
     Serial.println("Failed to initialize IMU!");
     while (1);
+
+  Wire.begin();
+  I2CMux.begin(Wire);
+  I2CMux.closeAll();
+  
+  I2CMux.openChannel(0);
+  delay(10);
+  
+  encoderLeft.begin(4);  //  set direction pin.
+  encoderLeft.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
+  encoderRight.begin(4);  //  set direction pin.
+  encoderRight.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
+  
+  int b = encoderLeft.isConnected();
+  Serial.print("Connect: ");
+  Serial.println(b);
+  
+  int c = encoderRight.isConnected();
+  Serial.print("Connect: ");
+  Serial.println(c);
   }
 
   pinMode(BIN1, OUTPUT);
@@ -230,6 +263,15 @@ void loop() {
           // Complementary filter
           theta = (1 - k) * acc_theta + k * (old_theta + gyro_x * dt);
 
+          //Angular speed
+          angV0 = encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
+          I2CMux.closeChannel(0);
+          I2CMux.openChannel(1);
+          angV1 = encoderRight.getAngularSpeed(AS5600_MODE_RPM);
+          I2CMux.closeChannel(1);
+          I2CMux.openChannel(0);
+          vel = (-angV0 + angV1)/2;
+          
           // PID calculations
           error = (offset_angle + desired_angle) - theta;
           d_theta = (old_theta - theta) / dt;
