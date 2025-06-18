@@ -227,7 +227,7 @@ void loop() {
   float acc_x, acc_y, acc_z;
   float gyro_x, gyro_y, gyro_z;
   float acc_theta, theta, vel;
-  float error, d_theta, pid_out;
+  float error, error_en, d_theta, pid_out, pid_out_imu, pid_out_en;
   int pwm;
   //Bluetooth setup
   // Wait for a BLE central to connect
@@ -332,18 +332,31 @@ void loop() {
 
         if (strcmp((const char*)receivedString, "r") == 0) {
           turn_L = 1.5;
+          turn_R = 1;
+          desired_angle = 0;
+          desired_vel = 0.1/0.075;
         }   
         else if (strcmp((const char*)receivedString, "l") == 0) {
+          turn_L = 1;
           turn_R = 1.5;
+          desired_angle = 0;
+          desired_vel = 0.1/0.075;
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
+          turn_L = 1;
+          turn_R = 1;
           desired_angle = -0.5;
+          desired_vel = 0.1/0.075;
         }
         else if (strcmp((const char*)receivedString, "b") == 0) {
+          turn_L = 1;
+          turn_R = 1;
           desired_angle = 0.5;
+          desired_vel = -0.1/0.075;
         }
         else if (strcmp((const char*)receivedString, "s") == 0) {
           desired_angle = 0;
+          desired_vel = 0;
           turn_L = 1;
           turn_R = 1;
         }
