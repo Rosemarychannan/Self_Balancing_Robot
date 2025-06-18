@@ -4,7 +4,7 @@
 #include <Wire.h>
 #include "TCA9548A.h"
 
-TCA9548A I2CMux;a
+TCA9548A I2CMux;
 AS5600 encoderLeft;
 AS5600 encoderRight;
 
