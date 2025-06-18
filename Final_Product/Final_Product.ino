@@ -31,12 +31,15 @@ float kd = 0.4;
 
 float offset_angle = 0.35; // balance setpoint
 float desired_angle = 0; // balance setpoint
+float desired_vel = 0;
 float turn_L = 1;
 float turn_R = 1;
 float old_theta = 0;
 float gyro_theta = 0;
 float old_error = 0;
+float old_error_en = 0;
 float i_theta = 0;
+float i_theta_en = 0;
 
 int task = 0;
 String input;
@@ -190,7 +193,7 @@ void keyboard_test (void) {
 void loop() {
   float acc_x, acc_y, acc_z;
   float gyro_x, gyro_y, gyro_z;
-  float acc_theta, theta;
+  float acc_theta, theta, vel;
   float error, d_theta, pid_out;
   int pwm;
   //Bluetooth setup
@@ -232,8 +235,14 @@ void loop() {
           d_theta = (old_theta - theta) / dt;
           i_theta += ki *(error + old_error) / 2.0 * dt;
           i_theta = constrain(i_theta,-50,50);
+          pid_out_imu = (kp * error) + (i_theta) + (kd * d_theta); 
+            
+          error_en = desired_vel - vel;
+          i_theta_en += ki_en *(error_en + old_error_en) / 2.0 * dt;
+          pid_out_en = (kp_en * error_en) + (i_theta_en);
 
-          pid_out = (kp * error) + (i_theta) + (kd * d_theta);
+          pid_out = k_pid * pid_out_imu + (1-k_pid)*pid_out_en;
+            
           if(pid_out < -255 or pid_out > 255) {
             pwm = 255;
           }
@@ -260,6 +269,7 @@ void loop() {
             both_motorOff();
 
           old_error = error;
+          old_error_en = error_en;
           old_theta = theta;
       // Check if the characteristic was written
       if (customCharacteristic.written()) {
