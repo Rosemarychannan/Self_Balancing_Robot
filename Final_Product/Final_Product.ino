@@ -38,9 +38,9 @@ float k = 0.9;
 float kp = 7;
 float ki = 120;
 float kd = 0.4;
-float k_pid = 1;
-float ki_en = 0;
-float kp_en = 0;
+float k_pid = 0.9;
+float kp_en = 5;
+float ki_en = kp_en/200.0;
 
 float offset_angle = 0.35; // balance setpoint
 float desired_angle = 0; // balance setpoint
@@ -124,7 +124,7 @@ void setup() {
   if (!IMU.begin()) {
     Serial.println("Failed to initialize IMU!");
     while (1);
-
+  }
   Wire.begin();
   I2CMux.begin(Wire);
   I2CMux.closeAll();
@@ -144,7 +144,6 @@ void setup() {
   int c = encoderRight.isConnected();
   Serial.print("Connect: ");
   Serial.println(c);
-  }
 
   pinMode(BIN1, OUTPUT);
   pinMode(BIN2, OUTPUT);
@@ -264,13 +263,13 @@ void loop() {
           theta = (1 - k) * acc_theta + k * (old_theta + gyro_x * dt);
 
           //Angular speed
-          angV0 = encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
+          angV0 =encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
           I2CMux.closeChannel(0);
           I2CMux.openChannel(1);
-          angV1 = encoderRight.getAngularSpeed(AS5600_MODE_RPM);
+          angV1 = 0;//encoderRight.getAngularSpeed(AS5600_MODE_RPM);
           I2CMux.closeChannel(1);
           I2CMux.openChannel(0);
-          vel = (-angV0 + angV1)/2;
+          vel =(-angV0 + angV1)/2;
           
           // PID calculations
           error = (offset_angle + desired_angle) - theta;
@@ -281,7 +280,7 @@ void loop() {
             
           error_en = desired_vel - vel;
           i_theta_en += ki_en *(error_en + old_error_en) / 2.0 * dt;
-          pid_out_en = (kp_en * error_en) + (i_theta_en);
+          pid_out_en = (kp_en * error_en) + constrain(i_theta_en,-50,50);
 
           pid_out = k_pid * pid_out_imu + (1-k_pid)*pid_out_en;
             
@@ -333,26 +332,26 @@ void loop() {
         if (strcmp((const char*)receivedString, "r") == 0) {
           turn_L = 1.5;
           turn_R = 1;
-          desired_angle = 0;
-          desired_vel = 0.1/0.075;
+          desired_angle = -0.5;
+          desired_vel = 2;
         }   
         else if (strcmp((const char*)receivedString, "l") == 0) {
           turn_L = 1;
-          turn_R = 1.5;
-          desired_angle = 0;
-          desired_vel = 0.1/0.075;
+          turn_R = 1.3;
+          desired_angle = -0.5;
+          desired_vel = 2;
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
           turn_L = 1;
           turn_R = 1;
           desired_angle = -0.5;
-          desired_vel = 0.1/0.075;
+          desired_vel = 2;
         }
         else if (strcmp((const char*)receivedString, "b") == 0) {
           turn_L = 1;
           turn_R = 1;
           desired_angle = 0.5;
-          desired_vel = -0.1/0.075;
+          desired_vel = -2;
         }
         else if (strcmp((const char*)receivedString, "s") == 0) {
           desired_angle = 0;
