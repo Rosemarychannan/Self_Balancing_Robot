@@ -1,7 +1,7 @@
 // A is left wheel and B is right wheel
 // AIN1 and BIN1 used for reverse
 // AIN2 and BIN2 used for forward
-// Comment
+
 
 #include <ArduinoBLE.h>
 #include "Arduino_BMI270_BMM150.h"
