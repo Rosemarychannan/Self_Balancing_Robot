@@ -2,12 +2,13 @@
 // AIN1 and BIN1 used for reverse
 // AIN2 and BIN2 used for forward
 
-#include <ArduinoBLE.h>
-#include "Arduino_BMI270_BMM150.h"
 #include <AS5600.h>
 #include <ArduinoBLE.h>
 #include <Wire.h>
 #include "TCA9548A.h"
+#include <math.h>
+#include <Arduino_BMI270_BMM150.h>
+#include <string.h>
 
 #define BUFFER_SIZE 20
 
@@ -20,9 +21,7 @@ BLEService customService("00000000-5EC4-4083-81CD-A10B8D5CF6ED");
 BLECharacteristic customCharacteristic(
     "00000001-5EC4-4083-81CD-A10B8D5CF6ED", BLERead | BLEWrite | BLENotify, BUFFER_SIZE, false);
 
-#include <math.h>
-#include <Arduino_BMI270_BMM150.h>
-#include <string.h>
+
 
 // Define motor pins
 #define BIN1 D3
