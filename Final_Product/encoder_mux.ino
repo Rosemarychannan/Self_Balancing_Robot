@@ -1,110 +1,58 @@
+#include "Arduino_BMI270_BMM150.h"
+#include <AS5600.h>
+#include <ArduinoBLE.h>
 #include <Wire.h>
-#define EN_ADDR 0x36
-#define ANGLE_REG 0x0E
-#define MP 0x70
-#define CH0 0x01
-#define CH1 0x02
+#include "TCA9548A.h"
 
-int old_angle_0, old_angle_1;
-unsigned long start_time_1, start_time_0;
-int angle_0,angle_1;
-double ang_v_0, ang_v_1,dt_0,dt_1;
-unsigned long now_1,now_0;
-void setup()
+TCA9548A I2CMux;a
+AS5600 encoderLeft;
+AS5600 encoderRight;
+
+float angV, angV0,angV1;
+void setup() 
 {
-  Serial.begin(9600);
-  Wire.begin();
-  start_time_0 = micros();
-  old_angle_0 = read_angle(CH0);
-  Serial.print("angle_L: ");
-  Serial.print(old_angle_0);
-  Serial.print("\t");
-  start_time_1 = micros();
-  old_angle_1 = read_angle(CH1);
-  Serial.print("angle_R: ");
-  Serial.println(old_angle_1);
-  
+    Serial.begin(9600);
+    Serial.setTimeout(10);
+
+    Wire.begin();
+    I2CMux.begin(Wire);
+    I2CMux.closeAll();
+
+    I2CMux.openChannel(0);
+    delay(10);
+
+    encoderLeft.begin(4);  //  set direction pin.
+    encoderLeft.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
+    encoderRight.begin(4);  //  set direction pin.
+    encoderRight.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
+
+    int b = encoderLeft.isConnected();
+    Serial.print("Connect: ");
+    Serial.println(b);
+
+    int c = encoderRight.isConnected();
+    Serial.print("Connect: ");
+    Serial.println(c);
+
+    delay(500);
+     analogWrite(D6,255);    // left wheel
+     analogWrite(D5,254);    // right wheel
 }
-int read_angle(int channel){
-  Wire.beginTransmission(MP); // transmit to device #4
-  //Serial.println("transmission begin...or not: ");
-  Wire.write(channel);              // sends one byte
-  int a = Wire.endTransmission();    // stop transmitting
-  //Serial.println("error code: hoping for 0: ");
-  //Serial.print(a);
 
-  Wire.beginTransmission(EN_ADDR);
-  int b = Wire.write(ANGLE_REG);
-  //Serial.print("bytes written: ");
-  //Serial.println(b);
-
-  int c = Wire.endTransmission(false);    // stop transmitting
-  //Serial.println("error code: hoping for 0: ");
-  //Serial.println(c);
-  
-  int d = Wire.requestFrom(EN_ADDR, 2);
-  //Serial.println(d);
-
-  if (Wire.available() == 2) {
-    uint8_t msb = Wire.read();
-    //Serial.println("msb: ");
-    //Serial.print(msb);
-    uint8_t lsb = Wire.read();
-    //Serial.println("lsb: ");
-    //Serial.print(lsb);
-    return ((msb << 8) | lsb); // 12-bit result is in lower bits
-  } else {
-    return 0xFFFF;  // error code
-    //Serial.print("ERROR");
-  }
-}
 void loop()
 {
-  angle_0 = read_angle(CH0);
-  now_0  = micros();
-  dt_0 = (now_0-start_time_0)/1000000.0;
-  //Serial.print("angle_L: ");
-  //Serial.print(angle_0);
-  //Serial.print("\t");
-  angle_1 = read_angle(CH1);
-  now_1  = micros();
-  dt_1 = (now_1-start_time_1)/1000000.0;
-  //Serial.print("angle_R: ");
-  //Serial.println(angle_1);
-  //Serial.print("time: ");
-  //Serial.println(now);
-  start_time_0 = now_0;
-  start_time_1 = now_1;
-  //Serial.print("dt: ");
-  //Serial.println(dt);
-  ang_v_0 = (angle_0 - old_angle_0)/4096.0*360.0/dt_0;
-  Serial.print("angle_v_L: ");
-  Serial.print(angle_0 - old_angle_0);
-  Serial.print("\t");
-  //Serial.print("old_angle_v_L: ");
-  //Serial.print(old_angle_0);
-  ang_v_1 = (angle_1 - old_angle_1)/4096.0*360.0/dt_1;
-  Serial.print("angle_v_R: ");
-  Serial.println(angle_1 - old_angle_1);
-  old_angle_1 = angle_1;
-  old_angle_0 = angle_0;
-  delay(200);
+    angV0 = encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
+    Serial.print(-angV0);
+    Serial.print('\t');
+    I2CMux.closeChannel(0);
+    I2CMux.openChannel(1);
+    angV1 = encoderRight.getAngularSpeed(AS5600_MODE_RPM);
+    Serial.print(angV1);
+    Serial.print('\t');
+    I2CMux.closeChannel(1);
+    I2CMux.openChannel(0);
+    angV = (-angV0 + angV1)/2;
+    Serial.println(angV);
+    Serial.print('\t');
+    delay(100);
 }
-/*
-  velocity_error = target_velocity - current_velocity;
-  d_velocity = (velocity_error - old_velocity_error) / dt;
-  i_velocity += ki_vel * (velocity_error + old_velocity_error) / 2.0 * dt;
-
-  // Optional: constrain integral to avoid windup
-  i_velocity = constrain(i_velocity, -10.0, 10.0); // degrees
-
-  tilt_setpoint = kp_vel * velocity_error + i_velocity + kd_vel * d_velocity;
-
-  // Optional: limit tilt output
-  tilt_setpoint = constrain(tilt_setpoint, -10.0, 10.0); // degrees
-
-  old_velocity_error = velocity_error;
-*/
-
-
-//  -- END OF FILE --
