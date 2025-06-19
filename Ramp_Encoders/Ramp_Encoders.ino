@@ -10,7 +10,6 @@
 #define LEFT_MOTOR_FORWARD_PIN D5
 #define RIGHT_MOTOR_FORWARD_PIN D6
 #define RIGHT_MOTOR_REVERSE_PIN D9
-
 #define MOTOR_LEFT 1
 #define MOTOR_RIGHT 2
 
@@ -177,15 +176,15 @@ void loop() {
         fused_angle = (1 - complementary_filter_k) * acc_angle + complementary_filter_k * (previous_angle + gyro_x * dt);
 
         // Tilt recalibration every second
-        tilt_accumulator += acc_angle;
+        /*tilt_accumulator += acc_angle;
         tilt_sample_count++;
-        if (millis() - last_tilt_update_time >= 1000) {
+        if (millis() - last_tilt_update_time >= 500) {
           setpoint_offset_angle = tilt_accumulator / tilt_sample_count;
           tilt_accumulator = 0;
           tilt_sample_count = 0;
           last_tilt_update_time = millis();
         }
-
+        */
         // Read both encoders
         velocity_left = -encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
         I2CMux.closeChannel(0);
@@ -239,9 +238,9 @@ void loop() {
         Serial.println(command);
 
         if (strcmp(command, "f") == 0) {
-          target_velocity = 10;
+          target_velocity = 5;
         } else if (strcmp(command, "b") == 0) {
-          target_velocity = -10;
+          target_velocity = -5;
         } else if (strcmp(command, "s") == 0) {
           target_velocity = 0;
         }
