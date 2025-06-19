@@ -37,7 +37,7 @@ float k = 0.9;
 float kp = 7;
 float ki = 120;
 float kd = 0.4;
-float kp_en = 0.1;
+float kp_en = 0;
 float ki_en = kp_en/200.0;
 
 float offset_angle = 1.25; // balance setpoint
@@ -272,7 +272,7 @@ void loop() {
           Serial.println("velocity error: ");
           Serial.print(error_en);
           i_theta_en += ki_en *(error_en + old_error_en) / 2.0 * dt;
-          i_theta_en *= i_theta_en * 0.95;
+          i_theta_en *= 0.95;
           pid_out_en = (kp_en * error_en) + constrain(i_theta_en,-5,5);
           Serial.println("output desired angle:  ");
           Serial.print(pid_out_en);
@@ -354,6 +354,8 @@ void loop() {
           desired_vel = 0;
           turn_L = 1;
           turn_R = 1;
+          kp_en = 0;
+          offset_angle = 1.25;
         }
         else if (strcmp((const char*)receivedString, "p") == 0) {
           desired_vel +=1;
