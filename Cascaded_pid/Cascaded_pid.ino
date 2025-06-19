@@ -37,10 +37,10 @@ float k = 0.9;
 float kp = 7;
 float ki = 120;
 float kd = 0.4;
-float kp_en = 5;
+float kp_en = 0.1;
 float ki_en = kp_en/200.0;
 
-float offset_angle = 0.35; // balance setpoint
+float offset_angle = 1.25; // balance setpoint
 float desired_angle = 0; // balance setpoint
 float desired_vel = 0;
 float turn_L = 1;
@@ -94,18 +94,18 @@ void both_motorOff(){
 
 void both_forward(int pwm){
   forward(A, pwm);
-  forward(B, int(pwm*0.97));
+  forward(B, int(pwm*0.99));
 }
 
 void both_reverse(int pwm){
   reverse(A, pwm);
-  reverse(B, int(pwm*0.97));
+  reverse(B, int(pwm*0.99));
 }
 
 void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(10);
-  while (!Serial);
+  //Serial.begin(9600);
+  //Serial.setTimeout(10);
+  //while (!Serial);
 
   if (!IMU.begin()) {
     Serial.println("Failed to initialize IMU!");
@@ -267,7 +267,8 @@ void loop() {
           Serial.println("velocity error: ");
           Serial.print(error_en);
           i_theta_en += ki_en *(error_en + old_error_en) / 2.0 * dt;
-          pid_out_en = (kp_en * error_en) + constrain(i_theta_en,-10,10);
+          i_theta_en = constrain(i_theta_en,-10,10)*0.95;
+          pid_out_en = (kp_en * error_en) + i_theta_en;
           Serial.println("output desired angle:  ");
           Serial.print(pid_out_en);
           desired_angle = constrain(pid_out_en,-15,15);
@@ -275,7 +276,7 @@ void loop() {
           error = (offset_angle + desired_angle) - theta;
           d_theta = (old_theta - theta) / dt;
           i_theta += ki *(error + old_error) / 2.0 * dt;
-          i_theta = constrain(i_theta,-50,50);
+          i_theta = constrain(i_theta,-50,50)*0.95;
           pid_out = (kp * error) + (i_theta) + (kd * d_theta); 
           
           if(pid_out < -255 or pid_out > 255) {
