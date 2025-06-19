@@ -349,10 +349,20 @@ void loop() {
           turn_R = 1;
         }
         else if (strcmp((const char*)receivedString, "p") == 0) {
-          desired_vel +=0.1;
+          desired_vel +=1;
         }
         else if (strcmp((const char*)receivedString, "n") == 0) {
-          desired_vel -=0.1;
+          desired_vel -=1;
+        else if (strcmp((const char*)receivedString, "kp") == 0) {
+          kp_en += 0.1;
+        }
+        else if (strcmp((const char*)receivedString, "kn") == 0) {
+          kp_en -= 0.s1;
+        else if (strcmp((const char*)receivedString, "op") == 0) {
+          offset_angle +=2;
+        }
+        else if (strcmp((const char*)receivedString, "on") == 0) {
+          offset_angle -=2;
         }
 
         // Optionally, respond by updating the characteristic's value
