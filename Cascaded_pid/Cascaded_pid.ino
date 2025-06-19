@@ -329,8 +329,8 @@ void loop() {
           desired_vel = 10;
         }   
         else if (strcmp((const char*)receivedString, "l") == 0) {
-          turn_L = 1;
-          turn_R = 1.3;
+          turn_L = 1.5;
+          turn_R = 1;
           desired_vel = 10;
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
