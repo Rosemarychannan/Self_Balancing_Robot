@@ -36,7 +36,7 @@ float kd = 0.35;
 float kp_en = 0;
 float ki_en = kp_en/200.0;
 
-float offset_angle = 0.2; // balance setpoint
+float offset_angle = 0.3; // balance setpoint
 float desired_angle = 0; // balance setpoint
 float desired_vel = 0;
 float turn_L = 1;
@@ -299,7 +299,6 @@ void loop() {
           i_theta += ki *(error + old_error) / 2.0 * dt;
           i_theta = constrain(i_theta,-50,50);
           pid_out = (kp * error) + (i_theta) + (kd * d_theta); 
-          
           if(pid_out < -255 or pid_out > 255) {
             pwm = 255;
           }
@@ -345,15 +344,15 @@ void loop() {
         Serial.print("Received data: ");
         Serial.println(receivedString);
 
-        if (strcmp((const char*)receivedString, "r") == 0) {
+        if (strcmp((const char*)receivedString, "l") == 0) {
           turn_L = 1.5;
           turn_R = 1;
-          kp_en = 0.1;
+          kp_en = 0.3;
         }   
-        else if (strcmp((const char*)receivedString, "l") == 0) {
+        else if (strcmp((const char*)receivedString, "r") == 0) {
           turn_L = -1.5;
           turn_R = 1;
-          kp_en = 0.1;
+          kp_en = 0.3;
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
           turn_L = 1;
@@ -370,14 +369,12 @@ void loop() {
           turn_L = 1;
           turn_R = 1;
           kp_en = 0;
-          offset_angle = 0.2;
-          
         }
         else if (strcmp((const char*)receivedString, "p") == 0) {
-          desired_vel +=1;
+          desired_vel +=0.1;
         }
         else if (strcmp((const char*)receivedString, "n") == 0) {
-          desired_vel -=1;
+          desired_vel -=0.1;
         }
         else if (strcmp((const char*)receivedString, "kp") == 0) {
           kp_en += 0.1;
@@ -390,6 +387,8 @@ void loop() {
         }
         else if (strcmp((const char*)receivedString, "on") == 0) {
           offset_angle -=0.1;
+        }
+        else if (strcmp((const char*)receivedString, "ufp") == 0) {
         }
 
         // Optionally, respond by updating the characteristic's value
