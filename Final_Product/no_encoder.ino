@@ -37,11 +37,11 @@ BLECharacteristic customCharacteristic(
 float vel, angV0,angV1;
 // Constants and state variables
 float k = 0.9;
-float kp = 7;
-float ki = 120;
-float kd = 0.4;
+float kp = 10;
+float ki = 140;
+float kd = 0.3;
 
-float offset_angle = 0.35; // balance setpoint
+float offset_angle = 0.4; // balance setpoint
 float desired_angle = 0; // balance setpoint
 float desired_vel = 0;
 float turn_L = 1;
@@ -77,10 +77,10 @@ void forward(int num, int pwm){
 }
 void reverse(int num, int pwm){
   if(num == A){
-    analogWrite(AIN1,constrain(255- pwm*turn_L, 0, 255));
+    analogWrite(AIN1,constrain(255- pwm, 0, 255));
     analogWrite(AIN2,255);
   } else if(num == B){
-    analogWrite(BIN1,constrain(255- pwm*turn_R, 0, 255));
+    analogWrite(BIN1,constrain(255- pwm, 0, 255));
     analogWrite(BIN2,255);
   }
 }
@@ -91,19 +91,19 @@ void both_motorOff(){
 }
 
 void both_forward(int pwm){
-  forward(A, pwm+1);
-  forward(B, pwm);
+  forward(A, pwm);
+  forward(B, pwm*0.95);
 }
 
 void both_reverse(int pwm){
-  reverse(A, pwm+1);
-  reverse(B, pwm);
+  reverse(A, pwm);
+  reverse(B, pwm*0.95);
 }
 
 void setup() {
-  //Serial.begin(9600);
-  //Serial.setTimeout(10);
-  //while (!Serial);
+  Serial.begin(9600);
+  Serial.setTimeout(10);
+  while (!Serial);
 
   if (!IMU.begin()) {
     Serial.println("Failed to initialize IMU!");
