@@ -103,9 +103,9 @@ void both_reverse(int pwm){
 }
 
 void setup() {
-  //Serial.begin(9600);
-  //Serial.setTimeout(10);
-  //while (!Serial);
+  Serial.begin(9600);
+  Serial.setTimeout(10);
+  while (!Serial);
 
   if (!IMU.begin()) {
     Serial.println("Failed to initialize IMU!");
@@ -172,7 +172,7 @@ void keyboard_test (void) {
         input.toLowerCase();
     }
 
-    if (input == "kpen") {
+    if (input == "kp") {
         task = 1;
     }
     else if (input == "ki") {
@@ -184,7 +184,7 @@ void keyboard_test (void) {
     else if (input == "reset") {
         i_theta = 0;
     }
-    else if (input == "c") {
+    else if (input == "kpen") {
       task = 4;
     }
      else if (input == "angle") {
@@ -194,13 +194,16 @@ void keyboard_test (void) {
 
     switch (task) {
         case 1:
-            if(input == "0" || input.toFloat() > 0) kp_en = input.toFloat();
+            if(input == "0" || input.toFloat() > 0) kp = input.toFloat();
         break;
         case 2:
             if(input == "0" || input.toFloat() > 0) ki = input.toFloat();
         break;
         case 3:
             if(input == "0" || input.toFloat() > 0) kd = input.toFloat();
+        break;
+        case 4:
+            if(input == "0" || input.toFloat() > 0) kp_en = input.toFloat();
         break;
         case 5:
             if(input == "0" || input.toFloat() > 0) offset_angle = input.toFloat();
@@ -262,17 +265,20 @@ void loop() {
           Serial.println("velocity: ");
           Serial.print(vel);
           
-          // PID calculations
-          error_en = desired_vel - vel;
+          //displacement into a capping(?) constant
+         // error_en = desired_vel - vel;
+
+          
           Serial.println("velocity error: ");
           Serial.print(error_en);
           i_theta_en += ki_en *(error_en + old_error_en) / 2.0 * dt;
-          i_theta_en = constrain(i_theta_en,-10,10)*0.95;
-          pid_out_en = (kp_en * error_en) + i_theta_en;
+          i_theta_en *= i_theta_en * 0.95;
+          pid_out_en = (kp_en * error_en) + constrain(i_theta_en,-5,5);
           Serial.println("output desired angle:  ");
           Serial.print(pid_out_en);
           desired_angle = constrain(pid_out_en,-15,15);
-          
+
+          // PID calculations
           error = (offset_angle + desired_angle) - theta;
           d_theta = (old_theta - theta) / dt;
           i_theta += ki *(error + old_error) / 2.0 * dt;
@@ -327,22 +333,22 @@ void loop() {
         if (strcmp((const char*)receivedString, "r") == 0) {
           turn_L = 1.5;
           turn_R = 1;
-          desired_vel = 10;
+          desired_vel = 0.8;
         }   
         else if (strcmp((const char*)receivedString, "l") == 0) {
           turn_L = 1.5;
           turn_R = 1;
-          desired_vel = -10;
+          desired_vel = 1;
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
           turn_L = 1;
           turn_R = 1;
-          desired_vel = 6;
+          desired_vel = -4.5;
         }
         else if (strcmp((const char*)receivedString, "b") == 0) {
           turn_L = 1;
           turn_R = 1;
-          desired_vel = -4.5;
+          desired_vel = 6;
         }
         else if (strcmp((const char*)receivedString, "s") == 0) {
           desired_vel = 0;
@@ -362,10 +368,10 @@ void loop() {
           kp_en -= 0.1;
         }
         else if (strcmp((const char*)receivedString, "op") == 0) {
-          offset_angle +=2;
+          offset_angle +=0.1;
         }
         else if (strcmp((const char*)receivedString, "on") == 0) {
-          offset_angle -=2;
+          offset_angle -=0.1;
         }
 
         // Optionally, respond by updating the characteristic's value
