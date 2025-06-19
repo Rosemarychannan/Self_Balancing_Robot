@@ -252,23 +252,23 @@ void loop() {
           angV0 =encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
           I2CMux.closeChannel(0);
           I2CMux.openChannel(1);
-          angV1 = 0;//encoderRight.getAngularSpeed(AS5600_MODE_RPM);
+          angV1 = encoderRight.getAngularSpeed(AS5600_MODE_RPM);
           I2CMux.closeChannel(1);
           I2CMux.openChannel(0);
           vel =(-angV0 + angV1)/2;//in angle/sec
-          Serial.println(angular speed: );
+          Serial.println("angular speed: ");
           Serial.print(vel);
           vel = vel * PI / 180 * 4;// in cm/sec
-          Serial.println(velocity: );
+          Serial.println("velocity: ");
           Serial.print(vel);
           
           // PID calculations
           error_en = desired_vel - vel;
-          Serial.println(velocity error: );
+          Serial.println("velocity error: ");
           Serial.print(error_en);
           i_theta_en += ki_en *(error_en + old_error_en) / 2.0 * dt;
           pid_out_en = (kp_en * error_en) + constrain(i_theta_en,-10,10);
-          Serial.println(output desired angle:  );
+          Serial.println("output desired angle:  ");
           Serial.print(pid_out_en);
           desired_angle = constrain(pid_out_en,-15,15);
           
@@ -331,17 +331,17 @@ void loop() {
         else if (strcmp((const char*)receivedString, "l") == 0) {
           turn_L = 1.5;
           turn_R = 1;
-          desired_vel = 10;
+          desired_vel = -10;
         }
         else if (strcmp((const char*)receivedString, "f") == 0) {
           turn_L = 1;
           turn_R = 1;
-          desired_vel = 10;
+          desired_vel = 6;
         }
         else if (strcmp((const char*)receivedString, "b") == 0) {
           turn_L = 1;
           turn_R = 1;
-          desired_vel = -10;
+          desired_vel = -4.5;
         }
         else if (strcmp((const char*)receivedString, "s") == 0) {
           desired_vel = 0;
@@ -353,11 +353,13 @@ void loop() {
         }
         else if (strcmp((const char*)receivedString, "n") == 0) {
           desired_vel -=1;
+        }
         else if (strcmp((const char*)receivedString, "kp") == 0) {
           kp_en += 0.1;
         }
         else if (strcmp((const char*)receivedString, "kn") == 0) {
-          kp_en -= 0.s1;
+          kp_en -= 0.1;
+        }
         else if (strcmp((const char*)receivedString, "op") == 0) {
           offset_angle +=2;
         }
