@@ -36,11 +36,11 @@ float vel, angV0,angV1;
 float k = 0.9;
 float kp = 7;
 float ki = 100;
-float kd = 0.4;
+float kd = 0.35;
 float kp_en = 0;
 float ki_en = kp_en/200.0;
 
-float offset_angle = 0.4; // balance setpoint
+float offset_angle = -0.4; // balance setpoint
 float desired_angle = 0; // balance setpoint
 float desired_vel = 0;
 float turn_L = 1;
@@ -262,7 +262,7 @@ void loop() {
           Serial.println(angV1);
           I2CMux.closeChannel(1);
           I2CMux.openChannel(0);
-          vel =(-angV0 + angV1)/2;//in angle/sec
+          vel =(angV0 - angV1)/2;//in angle/sec
           Serial.print("angular speed: ");
           Serial.println(vel);
           vel = vel * PI / 180 * 4;// in cm/sec
@@ -341,7 +341,7 @@ void loop() {
         if (strcmp((const char*)receivedString, "r") == 0) {
           turn_L = 1.5;
           turn_R = 1;
-          desired_vel = 0.8;
+          desired_vel = -1;
         }   
         else if (strcmp((const char*)receivedString, "l") == 0) {
           turn_L = 1.5;
@@ -351,19 +351,19 @@ void loop() {
         else if (strcmp((const char*)receivedString, "f") == 0) {
           turn_L = 1;
           turn_R = 1;
-          desired_vel = -4.5;
+          desired_vel = 5;
         }
         else if (strcmp((const char*)receivedString, "b") == 0) {
           turn_L = 1;
           turn_R = 1;
-          desired_vel = 6;
+          desired_vel = -4.5;
         }
         else if (strcmp((const char*)receivedString, "s") == 0) {
           desired_vel = 0;
           turn_L = 1;
           turn_R = 1;
           //kp_en = 0;
-          offset_angle = 1.25;
+          offset_angle = -0.4;
         }
         else if (strcmp((const char*)receivedString, "p") == 0) {
           desired_vel +=1;
