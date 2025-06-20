@@ -268,7 +268,7 @@ void loop() {
           angV0 =encoderLeft.getAngularSpeed(AS5600_MODE_RPM);
           I2CMux.closeChannel(0);
           I2CMux.openChannel(1);
-          angV1 = 0;//encoderRight.getAngularSpeed(AS5600_MODE_RPM);
+          angV1 = encoderRight.getAngularSpeed(AS5600_MODE_RPM);
           I2CMux.closeChannel(1);
           I2CMux.openChannel(0);
           vel =(-angV0 + angV1)/2;
