@@ -24,7 +24,7 @@ To create a self-balancing bot that is able to:
 - 2 × AS5600 magnetic encoders
 - TCA9548A I²C multiplexer
 - 2 × DRV8833 H‑bridge motor drivers (paralleled for more current) 
-- Flutter (for Bluetooth controller app) 
+- Flutter (for Bluetooth controller app)    
 Overall, we were able to balance within the ±2 cm range and successfully achieved all objectives. The robot was also able to climb a 10-degree ramp. 
 
 # How the Robot Works: 
