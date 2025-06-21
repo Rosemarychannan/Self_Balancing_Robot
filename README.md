@@ -18,20 +18,13 @@ To create a self-balancing bot that is able to:
 
 # Hardware & Tools Used: 
 
-3D‑printed bot body 
-
-8 × 1.5 V rechargeable batteries 
-
-Arduino Nano 33 BLE Sense Rev2 with headers (ABX00070) 
-
-2 × AS5600 magnetic encoders
-
-TCA9548A I²C multiplexer
-
-2 × DRV8833 H‑bridge motor drivers (paralleled for more current) 
-
-Flutter (for Bluetooth controller app) 
-
+1) 3D‑printed bot body 
+2) 8 × 1.5 V rechargeable batteries 
+3) Arduino Nano 33 BLE Sense Rev2 with headers (ABX00070) 
+4) 2 × AS5600 magnetic encoders
+5) TCA9548A I²C multiplexer
+6) 2 × DRV8833 H‑bridge motor drivers (paralleled for more current) 
+7) Flutter (for Bluetooth controller app) 
 Overall, we were able to balance within the ±2 cm range and successfully achieved all objectives. The robot was also able to climb a 10-degree ramp. 
 
 # How the Robot Works: 
