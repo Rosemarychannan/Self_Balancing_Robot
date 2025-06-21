@@ -1,6 +1,8 @@
 # Self_Balancing_Robot
 [youtube link: https://youtu.be/x-iZBCKg02A](https://youtu.be/x-iZBCKg02A)
 
+<img width="803" alt="Screenshot 2025-06-21 at 12 10 08 AM" src="https://github.com/user-attachments/assets/d8daae9a-8ca8-499b-9b1e-d9d5e9366e6e" />
+
 ---
 # Overview: 
 
@@ -84,3 +86,15 @@ The night before the project was due, we returned to the lab to run a final test
 # Moving Forward: 
 
 Now that we know the system works, our next steps are to clean up and organize the code, and integrate timers for more autonomous control. Previously, most of our tests were done manually using toggle buttons. With everything validated, we can now encode sequences that run for specific durations. 
+
+# Testing
+
+https://github.com/user-attachments/assets/9a0a5298-2b6f-41c0-b1ad-c518d62518c2
+
+# Tuning
+
+https://github.com/user-attachments/assets/ab172b07-5f2b-4440-81bb-b1453649902a
+
+
+
+
