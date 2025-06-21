@@ -1,8 +1,7 @@
 # Self_Balancing_Robot
 [![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/x-iZBCKg02A/0.jpg)](https://www.youtube.com/watch?v=x-iZBCKg02A)
-
----[Self Balancing Robot.pdf](https://github.com/user-attachments/files/20845381/Self.Balancing.Robot.pdf)
-
+[Self Balancing Robot.pdf](https://github.com/user-attachments/files/20845381/Self.Balancing.Robot.pdf)
+---
 # Overview: 
 
 ELEC 391 Electrical Engineering Design Studio. 
