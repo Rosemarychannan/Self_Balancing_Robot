@@ -10,11 +10,27 @@ ELEC 391 Electrical Engineering Design Studio.
 
 # Objective: 
 
-To create a self-balancing bot that is able to: 1) balance on the spot without moving past a ±4 cm mark, 2) go backwards and forwards 50 cm and pause, 3) turn 45 degrees and pause, and 4) go up a ramp. 
+To create a self-balancing bot that is able to:    
+1) balance on the spot without moving past a ±4 cm mark,
+2) go backwards and forwards 50 cm and pause,
+3) turn 45 degrees and pause,
+4) go up a ramp. 
 
-# Hardware Used: 
+# Hardware & Tools Used: 
 
-We used a 3D-printed bot body, powered by 8 × 1.5V rechargeable batteries. The main controller was an Arduino Nano 33 BLE Sense Rev2 with headers (ABX00070). For velocity sensing, we used two AS5600 magnetic encoders, and to manage the I2C communication between them (since they share the same I2C address), we included one Multimax TCA9548A I2C multiplexer. Two H-bridge motor drivers were used to power the motors. 
+3D‑printed bot body 
+
+8 × 1.5 V rechargeable batteries 
+
+Arduino Nano 33 BLE Sense Rev2 with headers (ABX00070) 
+
+2 × AS5600 magnetic encoders
+
+TCA9548A I²C multiplexer
+
+2 × DRV8833 H‑bridge motor drivers (paralleled for more current) 
+
+Flutter (for Bluetooth controller app) 
 
 Overall, we were able to balance within the ±2 cm range and successfully achieved all objectives. The robot was also able to climb a 10-degree ramp. 
 
