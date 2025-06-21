@@ -1,5 +1,5 @@
 # Self_Balancing_Robot
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/x-iZBCKg02A/0.jpg)](https://www.youtube.com/watch?v=x-iZBCKg02A
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/x-iZBCKg02A/0.jpg)](https://www.youtube.com/watch?v=x-iZBCKg02A)
 
 ---
 # Overview: 
