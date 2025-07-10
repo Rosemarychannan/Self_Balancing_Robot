@@ -56,7 +56,7 @@ To reduce this effect, we manually adjusted how much forward and reverse motion 
 To calibrate for physical asymmetry between the motors, we added correction factors like turn_L = 1 and turn_R = 1.1 (or -1.15 for reverse). These were tuned through trial and error to ensure forward and backward turns happened at roughly the same speed and radius. 
 
 This logic isn't perfect, and it’s not based on an exact model, but it worked well enough for our goals. Here's a simplified version of our turning code: 
-'''
+```
 void forward(int num, int pwm){    
   if(num == A){    
     analogWrite(AIN1, 255);    
@@ -66,7 +66,7 @@ void forward(int num, int pwm){
     analogWrite(BIN2, constrain(int((255 - pwm) * turn_R), 0, 255));    
   }    
 }    
-'''  
+```
 
 The reverse logic follows a similar structure. 
 
