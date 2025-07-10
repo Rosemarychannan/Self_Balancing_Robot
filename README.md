@@ -57,15 +57,15 @@ To calibrate for physical asymmetry between the motors, we added correction fact
 
 This logic isn't perfect, and it’s not based on an exact model, but it worked well enough for our goals. Here's a simplified version of our turning code: 
 
-void forward(int num, int pwm){ 
-  if(num == A){ 
-    analogWrite(AIN1, 255); 
-    analogWrite(AIN2, constrain(int((255 - pwm) * turn_L), 0, 255)); 
-  } else if(num == B){ 
-    analogWrite(BIN1, 255); 
-    analogWrite(BIN2, constrain(int((255 - pwm) * turn_R), 0, 255)); 
-  } 
-} 
+void forward(int num, int pwm){ //
+  if(num == A){ //
+    analogWrite(AIN1, 255); //
+    analogWrite(AIN2, constrain(int((255 - pwm) * turn_L), 0, 255)); \\
+  } else if(num == B){ \\
+    analogWrite(BIN1, 255);    
+    analogWrite(BIN2, constrain(int((255 - pwm) * turn_R), 0, 255));    
+  }    
+}    
   
 
 The reverse logic follows a similar structure. 
